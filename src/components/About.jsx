@@ -35,7 +35,7 @@ const About = () => {
       <div className="about-container">
         {/* Left Side - Image */}
         <div className={`about-image ${isVisible ? 'visible' : ''}`}>
-          <img src="/about.jpg" alt="Jagadeesh" className={`profile-image ${isVisible ? 'visible' : ''}`} />
+          <img src={`${import.meta.env.BASE_URL}about.jpg`} alt="Jagadeesh" className={`profile-image ${isVisible ? 'visible' : ''}`} />
         </div>
 
         {/* Right Side - Content */}

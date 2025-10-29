@@ -53,7 +53,7 @@ const Homepage = ({ onEnter }) => {
         muted
         playsInline
       >
-        <source src="/intro.mov" type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}intro.mov`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
