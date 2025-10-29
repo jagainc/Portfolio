@@ -59,8 +59,7 @@ const Homepage = ({ onEnter }) => {
         muted
         playsInline
       >
-        <source src={`${import.meta.env.BASE_URL}intro.mov`} type="video/quicktime" />
-        <source src={`${import.meta.env.BASE_URL}intro.mov`} type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}intro.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 

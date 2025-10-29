@@ -101,6 +101,7 @@ Screenshot*.png
 *.tmp.png
 *.tmp.jpg
 *.tmp.gif
+*.mov
 
 # Keep frames directory but exclude system files
 frames/.DS_Store
