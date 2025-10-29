@@ -22,6 +22,11 @@ const Homepage = ({ onEnter }) => {
         }
       });
 
+      video.addEventListener('error', (e) => {
+        console.error('Video loading error:', e);
+        setIsVideoLoaded(true); // Show play button even if video fails
+      });
+
       // Pause the video initially
       video.pause();
     }
@@ -30,6 +35,7 @@ const Homepage = ({ onEnter }) => {
       if (video) {
         video.removeEventListener('loadeddata', () => {});
         video.removeEventListener('ended', () => {});
+        video.removeEventListener('error', () => {});
       }
     };
   }, [onEnter]);
@@ -53,6 +59,7 @@ const Homepage = ({ onEnter }) => {
         muted
         playsInline
       >
+        <source src={`${import.meta.env.BASE_URL}intro.mov`} type="video/quicktime" />
         <source src={`${import.meta.env.BASE_URL}intro.mov`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
