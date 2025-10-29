@@ -11,11 +11,16 @@ const Homepage = ({ onEnter }) => {
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
+      console.log('Video element found, setting up event listeners');
+      console.log('Video source:', video.querySelector('source')?.src);
+      
       video.addEventListener('loadeddata', () => {
+        console.log('Video loaded successfully');
         setIsVideoLoaded(true);
       });
 
       video.addEventListener('ended', () => {
+        console.log('Video ended, navigating to portfolio');
         // When video ends, navigate to liquid ether page
         if (onEnter) {
           onEnter();
@@ -24,7 +29,16 @@ const Homepage = ({ onEnter }) => {
 
       video.addEventListener('error', (e) => {
         console.error('Video loading error:', e);
+        console.error('Video error details:', video.error);
         setIsVideoLoaded(true); // Show play button even if video fails
+      });
+
+      video.addEventListener('loadstart', () => {
+        console.log('Video loading started');
+      });
+
+      video.addEventListener('canplay', () => {
+        console.log('Video can start playing');
       });
 
       // Pause the video initially
@@ -36,6 +50,8 @@ const Homepage = ({ onEnter }) => {
         video.removeEventListener('loadeddata', () => {});
         video.removeEventListener('ended', () => {});
         video.removeEventListener('error', () => {});
+        video.removeEventListener('loadstart', () => {});
+        video.removeEventListener('canplay', () => {});
       }
     };
   }, [onEnter]);
@@ -59,7 +75,8 @@ const Homepage = ({ onEnter }) => {
         muted
         playsInline
       >
-        <source src={`${import.meta.env.BASE_URL}intro.mp4`} type="video/mp4" />
+        <source src="./intro.mp4" type="video/mp4" />
+        <source src="/Portfolio/intro.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
