@@ -13,19 +13,22 @@ export default function TelephoneScene() {
         if (!mountRef.current) return;
 
         try {
+            // Detect mobile
+            const isMobile = window.innerWidth < 768;
+
             // Scene setup
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0a0a0a);
             sceneRef.current = scene;
 
-            // Camera setup
+            // Camera setup - adjust FOV and position for mobile
             const camera = new THREE.PerspectiveCamera(
-                50,
+                isMobile ? 70 : 50,
                 mountRef.current.clientWidth / mountRef.current.clientHeight,
                 0.1,
                 1000
             );
-            camera.position.set(4, 2, 4);
+            camera.position.set(isMobile ? 6 : 4, isMobile ? 3 : 2, isMobile ? 6 : 4);
             camera.lookAt(0, 0, 0);
 
             // Renderer setup
@@ -295,7 +298,18 @@ export default function TelephoneScene() {
                 targetRotationX = mouseY * 0.2;
             };
 
+            const handleTouchMove = (event) => {
+                if (event.touches.length === 1) {
+                    const rect = mountRef.current.getBoundingClientRect();
+                    mouseX = ((event.touches[0].clientX - rect.left) / rect.width) * 2 - 1;
+                    mouseY = -((event.touches[0].clientY - rect.top) / rect.height) * 2 + 1;
+                    targetRotationY = mouseX * 0.3;
+                    targetRotationX = mouseY * 0.2;
+                }
+            };
+
             mountRef.current.addEventListener('mousemove', handleMouseMove);
+            mountRef.current.addEventListener('touchmove', handleTouchMove, { passive: true });
 
             // Animation loop
             const animate = () => {
@@ -347,6 +361,7 @@ export default function TelephoneScene() {
                 }
                 if (mountRef.current) {
                     mountRef.current.removeEventListener('mousemove', handleMouseMove);
+                    mountRef.current.removeEventListener('touchmove', handleTouchMove);
                 }
                 window.removeEventListener('resize', handleResize);
                 renderer.dispose();

@@ -57,12 +57,18 @@
 }
 
 @media (max-width: 768px) {
+  .orb-wrapper {
+    height: 350px;
+  }
   .orb-text {
     font-size: 2rem;
   }
 }
 
 @media (max-width: 480px) {
+  .orb-wrapper {
+    height: 280px;
+  }
   .orb-text {
     font-size: 1.5rem;
   }

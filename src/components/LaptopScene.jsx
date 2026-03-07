@@ -13,19 +13,22 @@ export default function LaptopScene() {
         if (!mountRef.current) return;
 
         try {
+            // Detect mobile
+            const isMobile = window.innerWidth < 768;
+
             // Scene setup
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0a0a0a);
             sceneRef.current = scene;
 
-            // Camera setup
+            // Camera setup - adjust FOV and position for mobile
             const camera = new THREE.PerspectiveCamera(
-                45,
+                isMobile ? 60 : 45,
                 mountRef.current.clientWidth / mountRef.current.clientHeight,
                 0.1,
                 100
             );
-            camera.position.set(0, 1, 3);
+            camera.position.set(0, isMobile ? 0.5 : 1, isMobile ? 4.5 : 3);
 
             // Renderer setup
             const renderer = new THREE.WebGLRenderer({
@@ -247,19 +250,16 @@ export default function LaptopScene() {
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
 
-            const handleMouseDown = (event) => {
+            const handleStart = (clientX, clientY) => {
                 isDragging = true;
-                previousMousePosition = {
-                    x: event.clientX,
-                    y: event.clientY
-                };
+                previousMousePosition = { x: clientX, y: clientY };
                 mountRef.current.style.cursor = 'grabbing';
             };
 
-            const handleMouseMove = (event) => {
+            const handleMove = (clientX, clientY) => {
                 const rect = mountRef.current.getBoundingClientRect();
-                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
                 raycaster.setFromCamera(mouse, camera);
                 const intersects = raycaster.intersectObject(laptopGroup, true);
@@ -280,8 +280,8 @@ export default function LaptopScene() {
 
                 if (isDragging) {
                     const deltaMove = {
-                        x: event.clientX - previousMousePosition.x,
-                        y: event.clientY - previousMousePosition.y
+                        x: clientX - previousMousePosition.x,
+                        y: clientY - previousMousePosition.y
                     };
 
                     targetRotation.y += deltaMove.x * 0.01;
@@ -289,16 +289,25 @@ export default function LaptopScene() {
 
                     targetRotation.x = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, targetRotation.x));
 
-                    previousMousePosition = {
-                        x: event.clientX,
-                        y: event.clientY
-                    };
+                    previousMousePosition = { x: clientX, y: clientY };
                 }
             };
 
-            const handleMouseUp = () => {
+            const handleEnd = () => {
                 isDragging = false;
                 mountRef.current.style.cursor = isHovered ? 'grab' : 'default';
+            };
+
+            const handleMouseDown = (event) => {
+                handleStart(event.clientX, event.clientY);
+            };
+
+            const handleMouseMove = (event) => {
+                handleMove(event.clientX, event.clientY);
+            };
+
+            const handleMouseUp = () => {
+                handleEnd();
             };
 
             const handleMouseLeave = () => {
@@ -308,11 +317,31 @@ export default function LaptopScene() {
                 laptopGroup.scale.set(1, 1, 1);
             };
 
+            // Touch handlers for mobile
+            const handleTouchStart = (event) => {
+                if (event.touches.length === 1) {
+                    handleStart(event.touches[0].clientX, event.touches[0].clientY);
+                }
+            };
+
+            const handleTouchMove = (event) => {
+                if (event.touches.length === 1) {
+                    handleMove(event.touches[0].clientX, event.touches[0].clientY);
+                }
+            };
+
+            const handleTouchEnd = () => {
+                handleEnd();
+            };
+
             // Add event listeners
             mountRef.current.addEventListener('mousedown', handleMouseDown);
             mountRef.current.addEventListener('mousemove', handleMouseMove);
             mountRef.current.addEventListener('mouseup', handleMouseUp);
             mountRef.current.addEventListener('mouseleave', handleMouseLeave);
+            mountRef.current.addEventListener('touchstart', handleTouchStart, { passive: false });
+            mountRef.current.addEventListener('touchmove', handleTouchMove, { passive: false });
+            mountRef.current.addEventListener('touchend', handleTouchEnd);
 
             // Animation loop
             const animate = () => {
@@ -382,6 +411,9 @@ export default function LaptopScene() {
                     mountRef.current.removeEventListener('mousemove', handleMouseMove);
                     mountRef.current.removeEventListener('mouseup', handleMouseUp);
                     mountRef.current.removeEventListener('mouseleave', handleMouseLeave);
+                    mountRef.current.removeEventListener('touchstart', handleTouchStart);
+                    mountRef.current.removeEventListener('touchmove', handleTouchMove);
+                    mountRef.current.removeEventListener('touchend', handleTouchEnd);
                 }
                 window.removeEventListener('resize', handleResize);
                 renderer.dispose();

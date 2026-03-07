@@ -13,19 +13,22 @@ export default function MobilePhoneScene() {
         if (!mountRef.current) return;
 
         try {
+            // Detect mobile
+            const isMobile = window.innerWidth < 768;
+
             // Scene setup
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0a0a0a);
             sceneRef.current = scene;
 
-            // Camera setup
+            // Camera setup - adjust FOV and position for mobile
             const camera = new THREE.PerspectiveCamera(
-                50,
+                isMobile ? 65 : 50,
                 mountRef.current.clientWidth / mountRef.current.clientHeight,
                 0.1,
                 100
             );
-            camera.position.set(0, 1, 3);
+            camera.position.set(0, isMobile ? 0.5 : 1, isMobile ? 4 : 3);
 
             // Renderer setup
             const renderer = new THREE.WebGLRenderer({

@@ -222,6 +222,28 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.project-3d > div {
+  height: 400px;
+}
+
+@media (max-width: 1024px) {
+  .project-3d > div {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-3d > div {
+    height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-3d > div {
+    height: 220px;
+  }
+}
+
 .project-placeholder {
   text-align: center;
   color: white;

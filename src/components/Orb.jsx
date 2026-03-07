@@ -209,12 +209,39 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
       }
     };
 
+    const handleTouchMove = e => {
+      if (e.touches.length === 1) {
+        const rect = container.getBoundingClientRect();
+        const x = e.touches[0].clientX - rect.left;
+        const y = e.touches[0].clientY - rect.top;
+        const width = rect.width;
+        const height = rect.height;
+        const size = Math.min(width, height);
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const uvX = ((x - centerX) / size) * 2.0;
+        const uvY = ((y - centerY) / size) * 2.0;
+
+        if (Math.sqrt(uvX * uvX + uvY * uvY) < 0.8) {
+          targetHover = 1;
+        } else {
+          targetHover = 0;
+        }
+      }
+    };
+
     const handleMouseLeave = () => {
+      targetHover = 0;
+    };
+
+    const handleTouchEnd = () => {
       targetHover = 0;
     };
 
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    container.addEventListener('touchend', handleTouchEnd);
 
     let rafId;
     const update = t => {
@@ -244,6 +271,8 @@ export default function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = tru
       window.removeEventListener('resize', resize);
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
       container.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };

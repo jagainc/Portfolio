@@ -46,7 +46,7 @@ const About = () => {
               colors={['#2020a4ff', '#8a8aff', '#c0c0c0', '#6f3cff', '#3131c9ff']}
               animationSpeed={6}
             >
-              I have 2 and half years of experience in prompt engineering — yes, I speak fluent AI, and no, I don't whisper sweet nothings to Ai… usually. I turn ideas into words so powerful that even machines say, 'Whoa, that's clever.This could make me a friend of Ai and this Friend would complete works faster than other manual Developers'
+              I have 3 years of experience in React and Python Django, building robust and scalable applications. I am highly adaptable to AI, leveraging it to 10x my productivity and deliver high-quality results faster than traditional development workflows.
             </GradientText>
           </div>
           <div className="about-text">

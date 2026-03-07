@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Orb from './Orb';
+
 import LaptopScene from './LaptopScene';
 import SilverOrbScene from './SilverOrbScene';
 import './Projects.css';
@@ -39,13 +39,12 @@ const Projects = () => {
           <h2>Projects</h2>
         </div>
 
-        {/* Project 1 - KIJO Orb */}
+        {/* Project 1 - KIJO */}
         <div className={`project-section ${isVisible ? 'visible' : ''}`}>
           <h3 className="project-title">KIJO </h3>
           <p className="project-description">
             An Ai Call Receptionist for daily usage!
           </p>
-          <Orb hue={240} hoverIntensity={0.3} rotateOnHover={true} />
         </div>
 
         {/* Learn More Button */}

@@ -1,126 +1,59 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import MetallicText from './MetallicText';
 import './Homepage.css';
 
 const Homepage = ({ onEnter }) => {
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showPlayButton, setShowPlayButton] = useState(true);
-  const videoRef = useRef(null);
+  const [fontSize, setFontSize] = useState(180);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      console.log('Video element found, setting up event listeners');
-      console.log('Video source:', video.querySelector('source')?.src);
-      
-      video.addEventListener('loadeddata', () => {
-        console.log('Video loaded successfully');
-        setIsVideoLoaded(true);
-      });
-
-      video.addEventListener('ended', () => {
-        console.log('Video ended, navigating to portfolio');
-        // When video ends, navigate to liquid ether page
-        if (onEnter) {
-          onEnter();
-        }
-      });
-
-      video.addEventListener('error', (e) => {
-        console.error('Video loading error:', e);
-        console.error('Video error details:', video.error);
-        setIsVideoLoaded(true); // Show play button even if video fails
-      });
-
-      video.addEventListener('loadstart', () => {
-        console.log('Video loading started');
-      });
-
-      video.addEventListener('canplay', () => {
-        console.log('Video can start playing');
-      });
-
-      // Pause the video initially
-      video.pause();
-    }
-
-    return () => {
-      if (video) {
-        video.removeEventListener('loadeddata', () => {});
-        video.removeEventListener('ended', () => {});
-        video.removeEventListener('error', () => {});
-        video.removeEventListener('loadstart', () => {});
-        video.removeEventListener('canplay', () => {});
+    const handleResize = () => {
+      if (window.innerWidth <= 480) {
+        setFontSize(90);
+      } else if (window.innerWidth <= 768) {
+        setFontSize(130);
+      } else if (window.innerWidth <= 1024) {
+        setFontSize(160);
+      } else {
+        setFontSize(180);
       }
     };
-  }, [onEnter]);
 
-  const handlePlayClick = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.currentTime = 0; // Start from beginning
-      video.play();
-      setIsPlaying(true);
-      setShowPlayButton(false);
-    }
-  };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="homepage">
-      {/* Video Background */}
-      <video
-        ref={videoRef}
-        className="homepage-video"
-        muted
-        playsInline
-      >
-        <source src="./intro.mp4" type="video/mp4" />
-        <source src="/Portfolio/intro.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
       {/* Overlay */}
-      <div className={`homepage-overlay ${isPlaying ? 'playing' : ''}`} />
+      <div className="homepage-overlay" />
 
       {/* Content */}
       <div className="homepage-content">
         {/* Logo/Brand */}
-        {!isPlaying && (
-          <div className="homepage-brand">
-            <MetallicText 
-              text="Jagadeesh" 
-              fontSize={180}
-              params={{
-                patternScale: 1.8,
-                refraction: 0.02,
-                edge: 0.8,
-                patternBlur: 0.008,
-                liquid: 0.05,
-                speed: 0.4
-              }}
-            />
-            <p>Developer Portfolio</p>
-          </div>
-        )}
+        <div className="homepage-brand">
+          <MetallicText 
+            text="Jagadeesh" 
+            fontSize={fontSize}
+            params={{
+              patternScale: 1.8,
+              refraction: 0.02,
+              edge: 0.8,
+              patternBlur: 0.008,
+              liquid: 0.05,
+              speed: 0.4
+            }}
+          />
+          <p>Developer Portfolio</p>
+        </div>
 
-        {/* Glass Play Button */}
-        {showPlayButton && (
-          <button 
-            className={`glass-play-button ${isVideoLoaded ? 'visible' : ''}`}
-            onClick={handlePlayClick}
-          >
-            <div className="play-icon">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path 
-                  d="M8 5V19L19 12L8 5Z" 
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-            <span>Play Intro</span>
-          </button>
-        )}
+        {/* Glass Enter Button */}
+        <button 
+          className="glass-play-button visible"
+          onClick={onEnter}
+        >
+          <span>Enter Portfolio</span>
+        </button>
       </div>
     </div>
   );
